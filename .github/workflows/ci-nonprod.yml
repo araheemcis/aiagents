@@ -78,5 +78,5 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add manifests/statefulset-nonprod.yaml
+          git add k8s-keycloak-agent-repo/manifests/statefulset-nonprod.yaml
           git diff --quiet && git diff --staged --quiet || (git commit -m "ci: update non-prod image tag to feature-${{ env.SHORT_SHA }} [skip ci]" && git push)
