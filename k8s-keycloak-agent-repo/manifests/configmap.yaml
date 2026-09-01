@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-config
+  namespace: ai-agent-system
+data:
+  GMAIL_USER: "itsmeabdul202@gmail.com"
+  KEYCLOAK_URL: "https://keycloak.keycloak.svc.cluster.local:8443/"
+  KEYCLOAK_ADMIN_USER: "admin"
+  KEYCLOAK_REALM: "k8s-realm"
+  KEYCLOAK_OIDC_URL: "https://192.168.1.225:30281/realms/k8s-realm"
+  K8S_APISERVER_URL: "https://192.168.1.225:6443"
+  OIDC_CLIENT_ID: "kubernetes"
+  POLL_INTERVAL_SECONDS: "30"
+  EMAIL_SUBJECT_FILTER: "K8s user deployment"
