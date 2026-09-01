@@ -23,6 +23,8 @@ spec:
           imagePullPolicy: Always
           env:
             # Static Non-Prod Configuration
+            - name: PYTHONUNBUFFERED
+              value: "1"
             - name: KEYCLOAK_URL
               value: "https://keycloak.keycloak.svc.cluster.local:8443/"
             - name: KEYCLOAK_REALM
