@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - 'feature/**'
-
+permissions:
+    contents: write # Grants the GITHUB_TOKEN write access to push commits
 jobs:
   lint-and-scan:
     name: Code Quality & Security Scan
