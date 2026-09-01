@@ -18,19 +18,6 @@ spec:
     spec:
       serviceAccountName: k8s-keycloak-agent-sa
       containers:
-
-      - name: agent
-        image: araheemcis/k8s-keycloak-agent:feature-6ee15cb
-        imagePullPolicy: Always
-        envFrom:
-        - secretRef:
-            name: agent-secrets
-        env:
-        - name: POLL_INTERVAL_SECONDS
-          value: "15"
-        - name: EMAIL_SUBJECT_FILTER
-          value: "K8s user deployment TEST"
-
         - name: k8s-keycloak-agent
           image: araheemcis/k8s-keycloak-agent:feature-6ee15cb
           imagePullPolicy: Always
@@ -62,4 +49,3 @@ spec:
                 secretKeyRef:
                   name: agent-secrets
                   key: gmail-app-password
-
