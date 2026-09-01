@@ -19,7 +19,7 @@ spec:
       serviceAccountName: k8s-keycloak-agent-sa
       containers:
       - name: agent
-        image: docker.io/araheemcis/k8s-keycloak-agent:latest
+        image: araheemcis/k8s-keycloak-agent:feature-f181f29
         imagePullPolicy: Always
         envFrom:
         - secretRef:
