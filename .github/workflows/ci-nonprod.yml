@@ -72,7 +72,7 @@ jobs:
       - name: Update Non-Prod Manifest Image Tag
         run: |
           NEW_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/k8s-keycloak-agent:feature-${{ env.SHORT_SHA }}"
-          sed -i "s|image: .*k8s-keycloak-agent:.*|image: ${NEW_IMAGE}|g" manifests/statefulset-nonprod.yaml
+          sed -i "s|image: .*k8s-keycloak-agent:.*|image: ${NEW_IMAGE}|g" k8s-keycloak-agent-repo/manifests/statefulset-nonprod.yaml
 
       - name: Commit & Push Updated Manifest
         run: |
