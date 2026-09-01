@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: k8s-keycloak-agent-nonprod
+  namespace: ai-agent-test
+  labels:
+    app: k8s-keycloak-agent-nonprod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-keycloak-agent-nonprod
+  serviceName: k8s-keycloak-agent-nonprod
+  template:
+    metadata:
+      labels:
+        app: k8s-keycloak-agent-nonprod
+    spec:
+      serviceAccountName: k8s-keycloak-agent-sa
+      containers:
+      - name: agent
+        image: docker.io/araheemcis/k8s-keycloak-agent:latest
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: agent-secrets
+        env:
+        - name: POLL_INTERVAL_SECONDS
+          value: "15"
+        - name: EMAIL_SUBJECT_FILTER
+          value: "K8s user deployment TEST"

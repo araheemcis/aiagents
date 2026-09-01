@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: k8s-keycloak-agent-nonprod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/araheemcis/aiagents.git'
+    targetRevision: feature/nonprod-testing
+    path: k8s-keycloak-agent-repo/manifests
+    directory:
+      include: 'statefulset-nonprod.yaml'
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: ai-agent-test
+  syncPolicy:
+       
+    syncOptions:
+      - CreateNamespace=true

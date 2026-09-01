@@ -1,0 +1,81 @@
+name: Feature Branch CI/CD (Non-Prod)
+
+on:
+  push:
+    branches:
+      - 'feature/**'
+
+jobs:
+  lint-and-scan:
+    name: Code Quality & Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Linting & Security Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 bandit
+
+      - name: Code Linting (Flake8)
+        run: |
+          # Stop build if there are Python syntax errors or undefined names
+          flake8 agent.py --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all errors as warnings
+          flake8 agent.py --count --exit-zero --max-complexity=10 --max-line-length=120 --statistics
+
+      - name: Security Scan (Bandit)
+        run: |
+          # Scan agent.py for common security issues (ignoring HTTPS warnings if intentional)
+          bandit -r agent.py -s B501,B301 || true
+
+  build-and-deploy-nonprod:
+    name: Build Container & Update Non-Prod Manifest
+    needs: lint-and-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Generate Short SHA Tag
+        id: vars
+        run: echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/k8s-keycloak-agent:feature-${{ env.SHORT_SHA }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/k8s-keycloak-agent:nonprod-latest
+
+      - name: Update Non-Prod Manifest Image Tag
+        run: |
+          NEW_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/k8s-keycloak-agent:feature-${{ env.SHORT_SHA }}"
+          sed -i "s|image: .*k8s-keycloak-agent:.*|image: ${NEW_IMAGE}|g" manifests/statefulset-nonprod.yaml
+
+      - name: Commit & Push Updated Manifest
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifests/statefulset-nonprod.yaml
+          git diff --quiet && git diff --staged --quiet || (git commit -m "ci: update non-prod image tag to feature-${{ env.SHORT_SHA }} [skip ci]" && git push)
