@@ -24,6 +24,7 @@ jobs:
           pip install flake8 bandit
 
       - name: Code Linting (Flake8)
+        working-directory: ./k8s-keycloak-agent-repo
         run: |
           # Stop build if there are Python syntax errors or undefined names
           flake8 agent.py --count --select=E9,F63,F7,F82 --show-source --statistics
