@@ -62,8 +62,8 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./k8s-keycloak-agent-repo
+          file: ./k8s-keycloak-agent-repo/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/k8s-keycloak-agent:feature-${{ env.SHORT_SHA }}
