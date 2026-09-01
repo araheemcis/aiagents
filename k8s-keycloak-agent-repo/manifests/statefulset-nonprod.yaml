@@ -20,7 +20,7 @@ spec:
       containers:
 
       - name: agent
-        image: araheemcis/k8s-keycloak-agent:feature-f181f29
+        image: araheemcis/k8s-keycloak-agent:feature-6ee15cb
         imagePullPolicy: Always
         envFrom:
         - secretRef:
@@ -32,7 +32,7 @@ spec:
           value: "K8s user deployment TEST"
 
         - name: k8s-keycloak-agent
-          image: araheemcis/k8s-keycloak-agent:nonprod-latest
+          image: araheemcis/k8s-keycloak-agent:feature-6ee15cb
           imagePullPolicy: Always
           env:
             # Static Non-Prod Configuration
